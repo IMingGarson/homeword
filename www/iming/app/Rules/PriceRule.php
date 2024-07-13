@@ -3,14 +3,13 @@
 namespace App\Rules;
 
 use Closure;
-use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use App\Constants\Price;
 
-class PriceRule implements ValidationRule
+class PriceRule implements Rule
 {
     protected $currency;
-    protected $price;
-    const UPPER_NTD_BOUND = 2000;
-
     public function __construct($currency)
     {
         $this->currency = $currency;
@@ -23,18 +22,25 @@ class PriceRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        //
     }
 
     public function passes($attribute, $value)
     {
-        $this->price = $value;
-        
         if ($this->currency == 'USD')
         {
-            return $value * 31 <= $this->UPPER_NTD_BOUND;
+            return $value * Price::USD_EXCHANGE_RATE <= Price::NTD_PRICE_LIMIT;
         }
 
-        return $value <= $this->UPPER_NTD_BOUND;
+        return $value <= Price::NTD_PRICE_LIMIT;
+    }
+
+    /**
+     * Get the validation error message.
+     *
+     * @return string
+     */
+    public function message(): string
+    {
+        return 'Price Error.';
     }
 }

@@ -15,6 +15,11 @@ class OrderController extends Controller
         $this->orderService = $orderService;
     }
 
+    public function index()
+    {
+        return response()->json(['message' => 'Pong.'], 200);
+    }
+
     public function store(OrderStoreRequest $request)
     {
         $validated = $request->validate();
@@ -25,4 +30,5 @@ class OrderController extends Controller
         }
         return response()->json(['message' => 'Something went wrong.'], 500);
     }
+    
 }

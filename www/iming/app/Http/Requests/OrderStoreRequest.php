@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
+use App\Enums\CurrrencyType;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\PriceRule;
 
@@ -32,7 +34,7 @@ class OrderStoreRequest extends FormRequest
                 'required',
                 'numeric',
                 new PriceRule($currency)
-            ]
+            ],
             'currency' => 'required|in:TWD,USD',
         ];
     }
@@ -52,10 +54,9 @@ class OrderStoreRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        $response = response()->json([
-            'errors' => $validator->errors(),
-        ], 400);
-
-        throw new HttpResponseException($response);
+        // $response = response()->json([
+        //     'errors' => $validator->errors(),
+        // ], 400);
+        throw new HttpResponseException(response()->json($validator->errors(), 400));
     }
 }
