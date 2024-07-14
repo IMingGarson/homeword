@@ -15,14 +15,9 @@ class OrderController extends Controller
         $this->orderService = $orderService;
     }
 
-    public function index()
-    {
-        return response()->json(['message' => 'Pong.'], 200);
-    }
-
     public function store(OrderStoreRequest $request)
     {
-        $validated = $request->validate();
+        $validated = $request->validated();
 
         $res = $this->orderService->store($validated);
         if ($res) {

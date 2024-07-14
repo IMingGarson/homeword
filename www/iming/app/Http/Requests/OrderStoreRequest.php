@@ -6,6 +6,8 @@ use Illuminate\Contracts\Validation\Validator;
 use App\Enums\CurrrencyType;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\PriceRule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class OrderStoreRequest extends FormRequest
 {
@@ -46,7 +48,6 @@ class OrderStoreRequest extends FormRequest
             'name.regex' => '名稱須為英文，且第一個字母需大寫。',
             'price.required' => '金額不可為空。',
             'price.numeric' => '金額須應為數字。',
-            'price.max' => '金額須小於 2000 新台幣。',
             'currency.required' => '幣值不可為空。',
             'currency.in' => '幣值須為 TWD 或是 USD。',
         ];
@@ -54,9 +55,6 @@ class OrderStoreRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        // $response = response()->json([
-        //     'errors' => $validator->errors(),
-        // ], 400);
         throw new HttpResponseException(response()->json($validator->errors(), 400));
     }
 }

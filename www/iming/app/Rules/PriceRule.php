@@ -41,6 +41,6 @@ class PriceRule implements Rule
      */
     public function message(): string
     {
-        return 'Price Error.';
+        return '金額須應為數字，且總值應小於等於 2000 新台幣。';
     }
 }

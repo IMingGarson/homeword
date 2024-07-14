@@ -9,10 +9,14 @@ use App\Rules\PriceRule;
 
 class OrderRequestTest extends TestCase
 {
+    private function get_rules()
+    {
+        return (new OrderStoreRequest())->rules();
+    }
+
     public function test_valide_order_store_request()
     {
-        $request = new OrderStoreRequest();
-        $rules = $request->rules();
+        $rules = $this->get_rules();
 
         $validator = Validator::make([
             'name' => 'ProductName',
@@ -25,8 +29,7 @@ class OrderRequestTest extends TestCase
 
     public function test_non_captialized_first_letter_in_name()
     {
-        $request = new OrderStoreRequest();
-        $rules = $request->rules();
+        $rules = $this->get_rules();
         $validator = Validator::make([
             'name' => 'productname', // non-capitalized first letter
             'price' => 2000,
@@ -37,8 +40,7 @@ class OrderRequestTest extends TestCase
 
     public function test_invalid_price_in_twd()
     {
-        $request = new OrderStoreRequest();
-        $rules = $request->rules();
+        $rules = $this->get_rules();
         $validator = Validator::make([
             'name' => 'productname',
             'price' => 2500,
@@ -54,20 +56,14 @@ class OrderRequestTest extends TestCase
             'price' => 65, // 65 * 31 = 2015 > 2000
             'currency' => 'USD'
         ];
-        $temp_rules = [
-            'name' => [
-                'required',
-                'regex:/^[A-Z][a-zA-Z]*$/'
-            ],
-            'price' => [
-                'required',
-                'numeric',
-                new PriceRule($data['currency'])
-            ],
-            'currency' => 'required|in:TWD,USD',
+        $rules = $this->get_rules();
+        $rules['price'] = [
+            'required',
+            'numeric',
+            new PriceRule($data['currency'])
         ];
         // Test price validation for USD
-        $validator = Validator::make($data, $temp_rules);
+        $validator = Validator::make($data, $rules);
         $this->assertFalse($validator->passes());
     }
 
@@ -78,27 +74,20 @@ class OrderRequestTest extends TestCase
             'price' => 60, // 60 * 31 = 1860 <= 2000
             'currency' => 'USD'
         ];
-        $temp_rules = [
-            'name' => [
-                'required',
-                'regex:/^[A-Z][a-zA-Z]*$/'
-            ],
-            'price' => [
-                'required',
-                'numeric',
-                new PriceRule($data['currency'])
-            ],
-            'currency' => 'required|in:TWD,USD',
+        $rules = $this->get_rules();
+        $rules['price'] = [
+            'required',
+            'numeric',
+            new PriceRule($data['currency'])
         ];
         // Valid case for USD
-        $validator = Validator::make($data, $temp_rules);
+        $validator = Validator::make($data, $rules);
         $this->assertTrue($validator->passes());
     }
 
     public function test_invalid_currency()
     {
-        $request = new OrderStoreRequest();
-        $rules = $request->rules();
+        $rules = $this->get_rules();
         $data = [
             'name' => 'ProductName',
             'price' => 2000,
