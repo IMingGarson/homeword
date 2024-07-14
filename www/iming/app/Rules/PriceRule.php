@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use App\Constants\Price;
+use App\Enums\Currency;
 
 class PriceRule implements Rule
 {
@@ -26,7 +27,7 @@ class PriceRule implements Rule
 
     public function passes($attribute, $value)
     {
-        if ($this->currency == 'USD')
+        if ($this->currency == Currency::USD->value)
         {
             return $value * Price::USD_EXCHANGE_RATE <= Price::NTD_PRICE_LIMIT;
         }
@@ -41,6 +42,6 @@ class PriceRule implements Rule
      */
     public function message(): string
     {
-        return '金額須應為數字，且總值應小於等於 2000 新台幣。';
+        return 'Price is over 2000';
     }
 }

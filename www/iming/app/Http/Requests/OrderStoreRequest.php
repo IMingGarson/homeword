@@ -28,9 +28,20 @@ class OrderStoreRequest extends FormRequest
     {
         $currency = $this->input('currency');
         return [
+            'id' => [
+                'required',
+                'regex:/^[A-Za-z0-9_-]*$/'
+            ],
+            'address' => [
+                'required',
+                'array',
+            ],
+            'address.city' => ['required', 'regex:/^[A-Za-z0-9_-]*$/'],
+            'address.district' => ['required', 'regex:/^[A-Za-z0-9_-]*$/'],
+            'address.street' => ['required', 'regex:/^[A-Za-z0-9_-]*$/'],
             'name' => [
                 'required',
-                'regex:/^[A-Z][a-zA-Z]*$/'
+                'regex:/^[a-zA-Z ]+$/'
             ],
             'price' => [
                 'required',
@@ -44,12 +55,12 @@ class OrderStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => '名稱不可為空。',
-            'name.regex' => '名稱須為英文，且第一個字母需大寫。',
-            'price.required' => '金額不可為空。',
-            'price.numeric' => '金額須應為數字。',
-            'currency.required' => '幣值不可為空。',
-            'currency.in' => '幣值須為 TWD 或是 USD。',
+            'name.required' => 'Name contains non-English characters',
+            'name.regex' => 'Name is not capitalized',
+            'price.required' => 'Price is required',
+            'price.numeric' => 'Price is a number',
+            'currency.required' => 'Currency is required',
+            'currency.in' => 'Currency format is wrong',
         ];
     }
 

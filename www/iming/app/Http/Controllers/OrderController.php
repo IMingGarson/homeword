@@ -20,10 +20,9 @@ class OrderController extends Controller
         $validated = $request->validated();
 
         $res = $this->orderService->store($validated);
-        if ($res) {
-            return response()->json(['message' => 'Order created successfully.'], 201);
+        if ($res['code'] == 201) {
+            return response()->json($res, 201);
         }
-        return response()->json(['message' => 'Something went wrong.'], 500);
+        return response()->json($res, 400);
     }
-    
 }
